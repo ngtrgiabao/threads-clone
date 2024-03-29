@@ -10,15 +10,14 @@ export class CommentsService {
   constructor(@InjectModel(Comment.name)
   private commentModel: Model<Comment>) { }
 
-  create(createCommentDto: CreateCommentDto) {
+  async create(createCommentDto: CreateCommentDto) {
     const createdComment = this.commentModel.create({
       text: createCommentDto.text,
       parent: createCommentDto.parentId || null,
       user: createCommentDto.userId
     })
-    return createdComment.then(doc => {
-      return doc.populate(['user', 'parent'])
-    });
+    const doc = await createdComment;
+    return await doc.populate(['user', 'parent']);
   }
 
   findAll() {
@@ -28,13 +27,17 @@ export class CommentsService {
   getTopLevelComments() {
     return this.commentModel.find({
       parent: null
-    }).populate(['user', 'parent']).exec();
+    }).populate(['user', 'parent']).sort({
+      createdAt: -1
+    }).exec();
   }
 
   getCommentByParentId(parentId: string) {
     return this.commentModel.find({
       parent: parentId,
-    }).populate(['user', 'parent']).exec();
+    }).populate(['user', 'parent']).sort({
+      createdAt: -1
+    }).exec();
   }
 
   findOne(id: number) {

@@ -4,15 +4,14 @@
   <div class="sm:flex sm:justify-between sm:gap-4">
     <div>
       <h3 class="text-lg font-bold text-gray-900 sm:text-xl">
-        Building a SaaS product as a software developer
+        {{comment.user.name}}
       </h3>
     </div>
   </div>
 
   <div class="mt-4">
     <p class="text-pretty text-sm text-gray-500">
-      Lorem ipsum dolor sit, amet consectetur adipisicing elit. At velit illum provident a, ipsa
-      maiores deleniti consectetur nobis et eaque.
+      {{comment.text}}
     </p>
   </div>
 
@@ -22,7 +21,7 @@
       Reply
     </button>
     <button>12 Likes</button>
-    <button (click)="toggleExpanded()" class="duration-200" [class.rotate-180]="isExpanded">
+    <button (click)="toggleExpanded()" class="duration-200" [class.rotate-180]="isExpanded()">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
         class="w-6 h-6">
         <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
@@ -30,15 +29,13 @@
     </button>
   </dl>
 
-  <section class="nested-comments" *ngIf="isReplying">
-    <div class="text-xl">
-      <app-comment-form></app-comment-form>
-    </div>
+  <section class="my-4" *ngIf="isReplying()">
+    <app-comment-form placeholder="Write your reply" buttonText="Send"
+      (formSubmitted)="createComment($event)"></app-comment-form>
   </section>
 
-  <section class="nested-comments" *ngIf="isExpanded">
-    <div class="text-xl">
-      This is nested comment
-    </div>
+  <section class="nested-comments" *ngIf="isExpanded()">
+    <app-comment [comment]="nestedComment"
+      *ngFor="let nestedComment of nestedComments(); trackBy: commentTrackBy"></app-comment>
   </section>
 </article>
